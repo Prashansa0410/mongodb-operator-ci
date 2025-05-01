@@ -1,0 +1,4 @@
+# Ignore system files and kubectl cache
+.DS_Store
+*.log
+.kube/
