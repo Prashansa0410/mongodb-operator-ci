@@ -1,0 +1,20 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: mongodbclusters.sample.mongodb.com
+spec:
+  group: sample.mongodb.com
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+  scope: Namespaced
+  names:
+    plural: mongodbclusters
+    singular: mongodbcluster
+    kind: MongoDBCluster
+    shortNames:
+    - mgc

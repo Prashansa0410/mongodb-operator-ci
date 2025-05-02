@@ -1,0 +1,6 @@
+apiVersion: sample.mongodb.com/v1
+kind: MongoDBCluster
+metadata:
+  name: my-mongo-cluster
+spec:
+  replicas: 3

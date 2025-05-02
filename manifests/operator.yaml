@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mock-mongo-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mock-mongo-operator
+  template:
+    metadata:
+      labels:
+        app: mock-mongo-operator
+    spec:
+      containers:
+      - name: operator
+        image: busybox
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            while true; do
+              if [ $(kubectl get pods -l app=mongodb -o name | wc -l) -lt 3 ]; then
+                echo "Restoring pod..."
+                kubectl run mongo-pod-$(date +%s) --image=mongo --labels=app=mongodb
+              fi
+              sleep 10
+            done
+        securityContext:
+          runAsUser: 0

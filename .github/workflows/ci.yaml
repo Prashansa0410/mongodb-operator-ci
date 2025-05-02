@@ -1,0 +1,44 @@
+name: CI/CD Operator Test
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  operator-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup KinD cluster
+      uses: helm/kind-action@v1.5.0
+
+    - name: Install kubectl
+      run: |
+        sudo apt-get update && sudo apt-get install -y kubectl
+
+    - name: Apply CRD
+      run: kubectl apply -f manifests/crd.yaml
+
+    - name: Deploy Mock Operator
+      run: kubectl apply -f manifests/operator.yaml
+
+    - name: Create MongoDBCluster resource
+      run: |
+        # Simulate creation of 3 MongoDB pods
+        kubectl apply -f manifests/resource.yaml
+        for i in 1 2 3; do
+          kubectl run mongo-pod-$i --image=mongo --labels=app=mongodb
+        done
+
+    - name: Wait for pods to be ready
+      run: |
+        sleep 20
+        kubectl get pods
+
+    - name: Validate Recovery
+      run: |
+        export WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK }}
+        bash tests/validate_recovery.sh

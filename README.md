@@ -1,14 +1,18 @@
-# MongoDB Operator CI/CD Demo
+## CI/CD MongoDB Operator Validation
 
-This project demonstrates a CI/CD pipeline that deploys a Kubernetes Custom Resource + Operator, simulates pod failures, and validates recovery automatically.
+This project deploys a mock MongoDB Operator and validates self-healing recovery via GitHub Actions.
 
-## Structure
-- `manifests/`: CRD, Operator, and MongoDBCluster resource
-- `tests/`: Shell script to simulate and verify recovery
-- `.github/workflows/ci.yml`: GitHub Actions pipeline
+### Simulated Flow
 
-## Tech Stack
-- Kubernetes (Minikube/kind)
-- GitHub Actions
-- Kubectl
-- Shell scripting
+1. Deploys CRD + Operator
+2. Creates MongoDBCluster resource
+3. Deletes a MongoDB pod
+4. Validates if Operator auto-recovers
+5. Sends result to Slack/Webhook
+
+> Inspired by real-world Operator patterns.
+
+Run manually:
+```bash
+kubectl apply -f manifests/
+bash tests/validate_recovery.sh
